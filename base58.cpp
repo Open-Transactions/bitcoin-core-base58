@@ -106,6 +106,7 @@ std::string EncodeBase58Check(const unsigned char* pbegin, const unsigned char* 
     std::vector<unsigned char> vch(pbegin, pend);
     unsigned char *hash = Hash(vch.begin(), vch.end());
     vch.insert(vch.end(), hash, hash + 4);
+    delete[] hash;
     return EncodeBase58(vch);
 }
 
@@ -126,8 +127,10 @@ bool DecodeBase58Check(const char* psz, std::vector<unsigned char>& vchRet) {
     if (memcmp(hash, &vchRet.end()[-4], 4) != 0)
     {
         vchRet.clear();
+        delete[] hash;
         return false;
     }
+    delete[] hash;
     vchRet.resize(vchRet.size()-4);
     return true;
 }
